@@ -21,10 +21,10 @@ commit `82ff5d1b`, publicada em 2026-03-16). Branch de trabalho: `lab/4.1.1`.
 
 ## BUG-001 — Scripts de setup/reset do IDURAR referenciam modelos removidos
 
-**Status:** identificado, **ainda não corrigido** (decisão adiada — "só documentar por enquanto").
+**Status:** **corrigido no laboratório** em 2026-09-05 (Opção 1). Upstream continua quebrado.
 **Afeta:** release 4.1.1 **e** `master` atual do upstream (não corrigido lá).
-**Gravidade:** média. Impede `npm run setup` e `npm run reset` de completarem. O
-runtime do app **não** é afetado.
+**Gravidade:** média. Impedia `npm run setup` e `npm run reset` de completarem. O
+runtime do app **não** era afetado.
 
 ### Sintoma
 
@@ -55,7 +55,22 @@ O wiring dinâmico de rotas (`backend/src/models/utils/index.js`, que faz `globS
 dos modelos existentes) foi ajustado, então o app sobe sem essas telas. Mas os
 scripts de manutenção continuam com `require()` fixo para os modelos apagados.
 
-### Arquivos ainda quebrados (na 4.1.1 e no master)
+### Correção aplicada (Opção 1)
+
+Mudança **mínima**: retiradas apenas as referências aos modelos `PaymentMode` e
+`Taxes` (arquivos que o próprio upstream apagou). Nenhuma regra de negócio alterada
+— o que saiu foi seed de módulos inexistentes. Cada trecho removido tem comentário
+`[Product Brain Lab / BUG-001]` no lugar.
+
+- `backend/src/setup/setup.js` — removidos os `require` e os `insertMany` de Taxes/PaymentMode; o script agora chega em "Setup completed :Success!".
+- `backend/src/setup/reset.js` — removidos os `require` e os `deleteMany` de Taxes/PaymentMode.
+- `backend/src/controllers/coreControllers/setup.js` — removidos os `mongoose.model('PaymentMode'/'Taxes')` e os `insertMany` correspondentes.
+
+Observações fora do escopo desta correção (não tocadas):
+- `backend/src/controllers/coreControllers/setup.js` usa `Joi` sem importar (bug latente próprio).
+- `package.json` tem script `upgrade` → `src/setup/upgrade.js`, mas esse arquivo não existe no repo.
+
+### Arquivos que estavam quebrados (na 4.1.1 e no master)
 
 | Arquivo | Comando/rota | Linhas problemáticas |
 |---------|--------------|----------------------|
@@ -85,17 +100,10 @@ Após o `npm run setup` parcial:
 - ❌ `taxes` — não criada (módulo removido)
 - ❌ `paymentmodes` — não criada (módulo removido)
 
-### Opções de tratamento (decisão pendente)
+### Decisão
 
-1. **Correção mínima + re-setup limpo (recomendada):** remover de `setup.js` e
-   `reset.js` as referências aos modelos apagados (código morto, não é regra de
-   negócio); apagar o banco meio-populado; rodar `npm run setup` até o fim; commit
-   pequeno identificado como correção de bug do upstream; opcionalmente abrir PR
-   para o IDURAR.
-2. **Não modificar o IDURAR; contornar por fora:** subir o app com o admin/settings
-   que já existem e conviver com os scripts quebrados.
-3. **Só documentar (atual):** registrar aqui e no Confluence; decidir depois, antes
-   de rodar o app.
+Escolhida a **Opção 1** (correção mínima + re-setup limpo). Ver "Correção aplicada" acima.
+Fica pendente, se quisermos: abrir PR para o IDURAR upstream com a mesma correção.
 
 ### Referência
 
