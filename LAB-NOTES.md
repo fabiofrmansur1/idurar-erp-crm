@@ -9,6 +9,31 @@ commit `82ff5d1b`, publicada em 2026-03-16). Branch de trabalho: `lab/4.1.1`.
 
 ---
 
+## Como rodar o laboratório localmente
+
+Pré-requisitos já resolvidos nesta máquina: `fnm` instalado e ligado no perfil do
+PowerShell; Node `20.9.0` + npm `10.2.4` instalados via `fnm`; `backend/.env.local`
+com a `DATABASE` do MongoDB Atlas; dependências instaladas nos dois lados.
+
+Precisa de **dois terminais** (o `fnm` seleciona o Node 20.9.0 sozinho ao entrar na pasta):
+
+```powershell
+# Terminal 1 - backend (API em http://localhost:8888)
+cd C:\product-brain-lab\idurar-erp-crm\backend
+npm run dev
+
+# Terminal 2 - frontend (UI em http://localhost:3000)
+cd C:\product-brain-lab\idurar-erp-crm\frontend
+npm run dev
+```
+
+Abrir `http://localhost:3000` e logar com **`admin@admin.com` / `admin123`**
+(usuário de demonstração criado pelo `npm run setup`).
+
+Recriar os dados de demonstração do zero: `cd backend; npm run reset; npm run setup`.
+
+---
+
 ## Ajustes locais aplicados (não alteram regra de negócio)
 
 | # | Ajuste | Onde | Motivo |
