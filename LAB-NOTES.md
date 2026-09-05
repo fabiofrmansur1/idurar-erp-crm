@@ -134,3 +134,50 @@ Fica pendente, se quisermos: abrir PR para o IDURAR upstream com a mesma correç
 
 - Commit da remoção: `git show 3518aee2`
 - Comparar: `git show 4.1.1:backend/src/setup/setup.js`
+
+---
+
+## BUG-002 — Frontend: rotas apontam para telas removidas (tela branca após login)
+
+**Status:** **corrigido no laboratório** em 2026-09-05 (mesma abordagem do BUG-001).
+**Afeta:** release 4.1.1 **e** `master` atual do upstream (não corrigido lá).
+**Gravidade:** alta. O app fica **inutilizável** logo após o login — tela branca.
+
+### Sintoma
+
+Login OK; em seguida a tela fica em branco. Console do navegador:
+
+```
+Uncaught ReferenceError: Quote is not defined
+    at routes.jsx:74:17
+```
+
+### Causa raiz
+
+Mesmo commit `3518aee2` ("init update", 2025-07-27). No frontend, ele apagou as
+telas `pages/Quote/`, `pages/PaymentMode`, `pages/Taxes` e as linhas de `import`,
+mas **deixou as entradas de rota** que usavam esses componentes. Como
+`element: <Quote />` é avaliado quando o módulo `routes.jsx` carrega, o
+`ReferenceError` derruba o app inteiro.
+
+### Arquivos que estavam quebrados (na 4.1.1 e no master)
+
+| Arquivo | Trechos problemáticos |
+|---------|-----------------------|
+| `frontend/src/router/routes.jsx` | rotas `/quote`, `/quote/create`, `/quote/read/:id`, `/quote/update/:id` (`<Quote/>` etc.) e `/payment/mode`, `/taxes` (`<PaymentMode/>`, `<Taxes/>`) — componentes nunca importados |
+| `frontend/src/apps/Navigation/NavigationContainer.jsx` | itens de menu `quote`, `paymentMode`, `taxes` apontando para essas rotas |
+
+### Correção aplicada (mínima)
+
+Removidas as 6 entradas de rota mortas de `routes.jsx` e os 3 itens de menu mortos
+de `NavigationContainer.jsx`. Cada ponto tem comentário `[Product Brain Lab / BUG-002]`.
+Imports de ícones que ficaram sem uso (`FileSyncOutlined`, `WalletOutlined`,
+`ShopOutlined`) foram deixados como estavam — não causam erro; só apareceriam como
+aviso se `npm run lint` fosse executado. Nenhuma regra de negócio alterada.
+
+Verificação: os três `.jsx` afetados passam a transformar sem erro no Vite
+(HTTP 200); o `ReferenceError` de carga some.
+
+### Pendência opcional
+
+Mesmo PR do BUG-001 para o upstream pode incluir esta correção.

@@ -69,22 +69,8 @@ let routes = {
       path: '/invoice/pay/:id',
       element: <InvoiceRecordPayment />,
     },
-    {
-      path: '/quote',
-      element: <Quote />,
-    },
-    {
-      path: '/quote/create',
-      element: <QuoteCreate />,
-    },
-    {
-      path: '/quote/read/:id',
-      element: <QuoteRead />,
-    },
-    {
-      path: '/quote/update/:id',
-      element: <QuoteUpdate />,
-    },
+    // [Product Brain Lab / BUG-002] Rotas de /quote removidas: as telas Quote*
+    // foram apagadas pelo upstream (commit 3518aee2) sem remover estas rotas.
     {
       path: '/payment',
       element: <Payment />,
@@ -106,14 +92,8 @@ let routes = {
       path: '/settings/edit/:settingsKey',
       element: <Settings />,
     },
-    {
-      path: '/payment/mode',
-      element: <PaymentMode />,
-    },
-    {
-      path: '/taxes',
-      element: <Taxes />,
-    },
+    // [Product Brain Lab / BUG-002] Rotas /payment/mode e /taxes removidas:
+    // telas PaymentMode e Taxes apagadas pelo upstream (commit 3518aee2).
 
     {
       path: '/profile',

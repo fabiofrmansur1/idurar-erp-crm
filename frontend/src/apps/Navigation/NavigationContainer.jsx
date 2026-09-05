@@ -65,27 +65,14 @@ function Sidebar({ collapsible, isMobile = false }) {
       icon: <ContainerOutlined />,
       label: <Link to={'/invoice'}>{translate('invoices')}</Link>,
     },
-    {
-      key: 'quote',
-      icon: <FileSyncOutlined />,
-      label: <Link to={'/quote'}>{translate('quote')}</Link>,
-    },
+    // [Product Brain Lab / BUG-002] Itens de menu 'quote', 'paymentMode' e 'taxes'
+    // removidos: as telas correspondentes foram apagadas pelo upstream (commit 3518aee2).
     {
       key: 'payment',
       icon: <CreditCardOutlined />,
       label: <Link to={'/payment'}>{translate('payments')}</Link>,
     },
 
-    {
-      key: 'paymentMode',
-      label: <Link to={'/payment/mode'}>{translate('payments_mode')}</Link>,
-      icon: <WalletOutlined />,
-    },
-    {
-      key: 'taxes',
-      label: <Link to={'/taxes'}>{translate('taxes')}</Link>,
-      icon: <ShopOutlined />,
-    },
     {
       key: 'generalSettings',
       label: <Link to={'/settings'}>{translate('settings')}</Link>,
